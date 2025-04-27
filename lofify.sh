@@ -92,7 +92,7 @@ if [ $REPLACE_AUDIO -eq 1 ]; then
         -i "$VIDEO_FILE" \
         -i "$TEMP_AUDIO" \
         -map 0:v -map 1:a \
-        -c:v copy \
+        -c:v copy -c:a aac \
         "$OUTPUT_FILE"
 else
     # Overlay the lofi audio on top of the original audio
@@ -102,7 +102,7 @@ else
         -i "$TEMP_AUDIO" \
         -filter_complex "[0:a][1:a]amix=inputs=2:duration=shortest:weights=1 0.5[a]" \
         -map 0:v -map "[a]" \
-        -c:v copy \
+        -c:v copy -c:a aac \
         "$OUTPUT_FILE"
 fi
 
