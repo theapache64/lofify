@@ -92,6 +92,9 @@ download_sample_audio() {
   TEMP_DIR=$(mktemp -d)
   
   for file in "${FILES[@]}"; do
+    
+    echo "Downloading: $file (this may take a while)"
+
     ENCODED_FILENAME=$(echo "$file" | sed 's/ /%20/g' | sed 's/🌅/%F0%9F%8C%85/g' | sed 's/🌧/%F0%9F%8C%A7/g')
     if curl -s -f -L "https://github.com/theapache64/lofify/raw/refs/heads/master/lofi_audios/$ENCODED_FILENAME" -o "$TEMP_DIR/$file"; then
       # Move to the final destination
