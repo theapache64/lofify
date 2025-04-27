@@ -1,6 +1,6 @@
 ![](cover.jpeg)
 
-# lofify
+# 🎵 Lofify
 
 ![buildStatus](https://img.shields.io/github/workflow/status/theapache64/lofify/Java%20CI%20with%20Gradle?style=plastic)
 ![latestVersion](https://img.shields.io/github/v/release/theapache64/lofify)
@@ -8,27 +8,138 @@
 <img alt="Twitter: theapache64" src="https://img.shields.io/twitter/follow/theapache64.svg?style=social" />
 </a>
 
-> To add lofi BGM to your video files like screen records
+> A simple shell utility to add lofi background music to your videos.
 
-### ✨ Demo
+lofify takes videos, adds randomly selected lofi track from collection, with smooth fade-in and fade-out effects, to create perfect ambiance for screen recordings, tutorials, or any video content.
 
-- TBD
+![Lofify Demo](https://raw.githubusercontent.com/theapache64/lofify/master/assets/demo.gif)
 
-### Quick Installation
+## Features
 
-Install lofify with a single command:
+- 🎲 Randomly selects lofi background tracks
+- 🎚️ Option to overlay or completely replace original audio
+- 🔊 Smart fade-in and fade-out effects
+- ⏱️ Automatically trims audio to match video length
+- 🎯 Random starting point selection for variety
+
+## Usage
+
+### Basic Usage
+
+Add lofi background music to your video (overlaying with original audio):
+
+```bash
+lofify /path/to/your/video.mp4
+```
+
+### Replace Original Audio
+
+To completely replace the original audio with lofi music:
+
+```bash
+lofify /path/to/your/video.mp4 -r
+```
+
+### Output
+
+The processed video will be saved as `[original_name]_lofi.mp4` in the same directory as the original video.
+
+
+## Prerequisites
+
+Before installing Lofify, make sure you have the following dependencies:
+
+- **ffmpeg**: Required for audio/video processing
+  - macOS: `brew install ffmpeg`
+  - Ubuntu/Debian: `sudo apt install ffmpeg`
+  - Other systems: Visit [ffmpeg.org/download.html](https://ffmpeg.org/download.html)
+
+- **bc**: Required for floating-point calculations
+  - macOS: `brew install bc`
+  - Ubuntu/Debian: `sudo apt install bc`
+
+## Quick Installation
+
+Install Lofify with a single command:
 
 ```bash
 curl -s https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
+```
 
-## 🦿 Prerequisites
+or
 
-- TBD
+```bash
+wget -qO- https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
+```
 
-## ⌨️ Usage
+This will:
+- Install the Lofify script to your `~/bin` directory
+- Set up sample lofi audio files in `~/lofi_audios`
+- Add `~/bin` to your PATH (if not already there)
 
-- TBD
+After installation, you may need to restart your terminal or run `source ~/.bashrc` or `source ~/.zshrc` to make the command available in your current session.
 
+## Manual Installation
+
+If you prefer manual installation:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/theapache64/lofify.git
+   ```
+
+2. Make the script executable:
+   ```bash
+   chmod +x lofify.sh
+   ```
+
+3. Move the script to a directory in your PATH:
+   ```bash
+   mkdir -p ~/bin
+   cp lofify.sh ~/bin/lofify
+   ```
+
+4. Create a directory for lofi audio files:
+   ```bash
+   mkdir -p ~/lofi_audios
+   ```
+
+5. Copy the sample lofi audio files:
+   ```bash
+   cp -r lofi_audios/* ~/lofi_audios/
+   ```
+
+6. Add `~/bin` to your PATH (if not already there):
+   ```bash
+   echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
+   source ~/.bashrc  # or source ~/.zshrc
+   ```
+
+
+## Adding Your Own Lofi Tracks
+
+To add your own lofi tracks:
+
+1. Place your audio files (MP3, WAV, or OGG format) in the `~/lofi_audios` directory:
+   ```bash
+   cp your_lofi_track.mp3 ~/lofi_audios/
+   ```
+
+2. That's it! Lofify will now include your tracks in the random selection.
+
+## Examples
+
+### Add lofi background to a screen recording:
+
+```bash
+lofify ~/Desktop/screen_recording.mp4
+```
+
+### Replace audio in a tutorial video:
+
+```bash
+lofify ~/Videos/tutorial.mp4 -r
+```
 
 ## ✍️ Author
 
