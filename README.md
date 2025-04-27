@@ -10,9 +10,9 @@
 
 > A simple shell utility to add lofi background music to your videos.
 
-lofify takes videos, adds randomly selected lofi track from collection, with smooth fade-in and fade-out effects, to create perfect ambiance for screen recordings, tutorials, or any video content.
+lofify takes videos, adds randomly selected lofi track from collection, with smooth fade-in and fade-out effects, to create perfect ambiance for boring screen recordings 🤷🏼
 
-![Lofify Demo](https://raw.githubusercontent.com/theapache64/lofify/master/assets/demo.mp4)
+https://github.com/user-attachments/assets/67b617a2-1832-404e-88e0-23500b5c53a4
 
 ## Features
 
@@ -141,7 +141,7 @@ lofify ~/Desktop/screen_recording.mp4
 lofify ~/Videos/tutorial.mp4 -r
 ```
 
-## ✍️ Author
+### Author
 
 👤 **theapache64**
 
@@ -150,7 +150,7 @@ lofify ~/Videos/tutorial.mp4 -r
 
 Feel free to ping me 😉
 
-## 🤝 Contributing
+### Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any
 contributions you make are **greatly appreciated**.
@@ -178,7 +178,7 @@ Give a ⭐️ if this project helped you!
 
 
 
-## 📝 License
+## License
 
 ```
 Copyright © 2025 - theapache64
