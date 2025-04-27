@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# lofifify - A script to add random lofi background music to videos
-# Usage: lofifify <video_file> [-r]
+# lofify - A script to add random lofi background music to videos
+# Usage: lofify <video_file> [-r]
 #   -r: Replace original audio instead of overlapping
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: lofifify <video_file> [-r]"
+    echo "Usage: lofify <video_file> [-r]"
     echo "  -r: Replace original audio instead of overlapping"
     exit 1
 fi
