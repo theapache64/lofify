@@ -93,8 +93,7 @@ download_sample_audio() {
   
   for file in "${FILES[@]}"; do
     ENCODED_FILENAME=$(echo "$file" | sed 's/ /%20/g' | sed 's/🌅/%F0%9F%8C%85/g' | sed 's/🌧/%F0%9F%8C%A7/g')
-    
-    if curl -s -f -L "https://raw.githubusercontent.com/theapache64/lofify/master/lofi_audios/$ENCODED_FILENAME" -o "$TEMP_DIR/$file"; then
+    if curl -s -f -L "https://github.com/theapache64/lofify/raw/refs/heads/master/lofi_audios/$ENCODED_FILENAME" -o "$TEMP_DIR/$file"; then
       # Move to the final destination
       mv "$TEMP_DIR/$file" "$HOME/lofi_audios/"
       print_color "green" "✅ Downloaded: $file"
