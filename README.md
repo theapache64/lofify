@@ -12,7 +12,7 @@
 
 lofify takes videos, adds randomly selected lofi track from collection, with smooth fade-in and fade-out effects, to create perfect ambiance for screen recordings, tutorials, or any video content.
 
-![Lofify Demo](https://raw.githubusercontent.com/theapache64/lofify/master/assets/demo.gif)
+![Lofify Demo](https://raw.githubusercontent.com/theapache64/lofify/master/assets/demo.mp4)
 
 ## Features
 
