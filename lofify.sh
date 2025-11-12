@@ -1,14 +1,19 @@
 #!/bin/bash
 
+# [latest version - i promise!]
+echo "🎶 Lofify - v25.11.12.0 (12 Nov 2025)"
+
 # lofify - A script to add random lofi background music to videos
-# Usage: lofify <video_file> [-c] [-r]
-#   -c: Compress video (slower processing, smaller file size)
+# Usage: lofify <video_file> [-c|-cf] [-r]
+#   -c: Compress video (slower processing, best compression)
+#   -cf: Compress video fast (faster processing, good compression)
 #   -r: Replace original audio instead of overlapping
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: lofify <video_file> [-c] [-r]"
-    echo "  -c: Compress video (slower processing, smaller file size)"
+    echo "Usage: lofify <video_file> [-c|-cf] [-r]"
+    echo "  -c: Compress video (slower processing, best compression)"
+    echo "  -cf: Compress video fast (faster processing, good compression)"
     echo "  -r: Replace original audio instead of overlapping"
     exit 1
 fi
@@ -16,6 +21,7 @@ fi
 VIDEO_FILE="$1"
 REPLACE_AUDIO=0
 COMPRESS_VIDEO=0
+COMPRESS_FAST=0
 
 # Parse optional flags
 shift # Remove the video file argument
@@ -25,17 +31,27 @@ while [[ $# -gt 0 ]]; do
             COMPRESS_VIDEO=1
             shift
             ;;
+        -cf)
+            COMPRESS_FAST=1
+            shift
+            ;;
         -r)
             REPLACE_AUDIO=1
             shift
             ;;
         *)
             echo "Unknown flag: $1"
-            echo "Usage: lofify <video_file> [-c] [-r]"
+            echo "Usage: lofify <video_file> [-c|-cf] [-r]"
             exit 1
             ;;
     esac
 done
+
+# Check for conflicting compression flags
+if [ $COMPRESS_VIDEO -eq 1 ] && [ $COMPRESS_FAST -eq 1 ]; then
+    echo "Error: Cannot use both -c and -cf flags together"
+    exit 1
+fi
 
 # Check if video file exists
 if [ ! -f "$VIDEO_FILE" ]; then
@@ -106,6 +122,9 @@ OUTPUT_FILE="${VIDEO_FILE%.*}_lofi.mp4"
 if [ $COMPRESS_VIDEO -eq 1 ]; then
     VIDEO_CODEC="-c:v libx264 -crf 28 -preset slow"
     echo "Processing video with compression (this may take a while)..."
+elif [ $COMPRESS_FAST -eq 1 ]; then
+    VIDEO_CODEC="-c:v libx264 -crf 28 -preset superfast"
+    echo "Processing video with fast compression..."
 else
     VIDEO_CODEC="-c:v copy"
     echo "Processing video..."

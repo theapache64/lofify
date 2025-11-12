@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/67b617a2-1832-404e-88e0-23500b5c53a4
 - 🔊 Smart fade-in and fade-out effects
 - ⏱️ Automatically trims audio to match video length
 - 🎯 Random starting point selection for variety
-- 📦 Optional video compression to reduce file size
+- 📦 Optional video compression (slow or fast modes) to reduce file size
 
 ## Usage
 
@@ -43,19 +43,33 @@ lofify /path/to/your/video.mp4 -r
 
 ### Compress Video
 
-To compress the video while adding lofi music (reduces file size, but takes longer to process):
+To compress the video while adding lofi music, you have two options:
 
+**Slow compression** (best compression, slower processing):
 ```bash
 lofify /path/to/your/video.mp4 -c
 ```
 
-You can also combine flags:
-
+**Fast compression** (good compression, faster processing):
 ```bash
-lofify /path/to/your/video.mp4 -c -r
+lofify /path/to/your/video.mp4 -cf
 ```
 
-**Note**: Compression uses H.264 codec with CRF 28 and slow preset for optimal file size reduction. This will take significantly longer than the default mode which simply copies the video stream.
+You can also combine compression with other flags:
+
+```bash
+# Slow compression + replace audio
+lofify /path/to/your/video.mp4 -c -r
+
+# Fast compression + replace audio
+lofify /path/to/your/video.mp4 -cf -r
+```
+
+**Note**:
+- `-c` uses H.264 codec with CRF 28 and slow preset for optimal file size reduction
+- `-cf` uses H.264 codec with CRF 28 and superfast preset for faster encoding
+- Both compression modes take longer than the default mode which simply copies the video stream
+- You cannot use both `-c` and `-cf` flags together
 
 ### Output
 
@@ -158,16 +172,26 @@ lofify ~/Desktop/screen_recording.mp4
 lofify ~/Videos/tutorial.mp4 -r
 ```
 
-### Compress a large video while adding lofi music:
+### Compress a large video while adding lofi music (slow, best compression):
 
 ```bash
 lofify ~/Desktop/large_video.mp4 -c
 ```
 
+### Fast compress a video for quick sharing:
+
+```bash
+lofify ~/Desktop/demo_video.mp4 -cf
+```
+
 ### Compress and replace audio (combine both flags):
 
 ```bash
+# Slow compression
 lofify ~/Videos/presentation.mp4 -c -r
+
+# Fast compression
+lofify ~/Videos/presentation.mp4 -cf -r
 ```
 
 ### Author
