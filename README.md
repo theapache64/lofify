@@ -21,6 +21,7 @@ https://github.com/user-attachments/assets/67b617a2-1832-404e-88e0-23500b5c53a4
 - 🔊 Smart fade-in and fade-out effects
 - ⏱️ Automatically trims audio to match video length
 - 🎯 Random starting point selection for variety
+- 📦 Optional video compression to reduce file size
 
 ## Usage
 
@@ -39,6 +40,22 @@ To completely replace the original audio with lofi music:
 ```bash
 lofify /path/to/your/video.mp4 -r
 ```
+
+### Compress Video
+
+To compress the video while adding lofi music (reduces file size, but takes longer to process):
+
+```bash
+lofify /path/to/your/video.mp4 -c
+```
+
+You can also combine flags:
+
+```bash
+lofify /path/to/your/video.mp4 -c -r
+```
+
+**Note**: Compression uses H.264 codec with CRF 28 and slow preset for optimal file size reduction. This will take significantly longer than the default mode which simply copies the video stream.
 
 ### Output
 
@@ -139,6 +156,18 @@ lofify ~/Desktop/screen_recording.mp4
 
 ```bash
 lofify ~/Videos/tutorial.mp4 -r
+```
+
+### Compress a large video while adding lofi music:
+
+```bash
+lofify ~/Desktop/large_video.mp4 -c
+```
+
+### Compress and replace audio (combine both flags):
+
+```bash
+lofify ~/Videos/presentation.mp4 -c -r
 ```
 
 ### Author

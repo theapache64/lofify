@@ -1,23 +1,41 @@
 #!/bin/bash
 
 # lofify - A script to add random lofi background music to videos
-# Usage: lofify <video_file> [-r]
+# Usage: lofify <video_file> [-c] [-r]
+#   -c: Compress video (slower processing, smaller file size)
 #   -r: Replace original audio instead of overlapping
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: lofify <video_file> [-r]"
+    echo "Usage: lofify <video_file> [-c] [-r]"
+    echo "  -c: Compress video (slower processing, smaller file size)"
     echo "  -r: Replace original audio instead of overlapping"
     exit 1
 fi
 
 VIDEO_FILE="$1"
 REPLACE_AUDIO=0
+COMPRESS_VIDEO=0
 
-# Check if the -r flag is provided
-if [ "$2" = "-r" ]; then
-    REPLACE_AUDIO=1
-fi
+# Parse optional flags
+shift # Remove the video file argument
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -c)
+            COMPRESS_VIDEO=1
+            shift
+            ;;
+        -r)
+            REPLACE_AUDIO=1
+            shift
+            ;;
+        *)
+            echo "Unknown flag: $1"
+            echo "Usage: lofify <video_file> [-c] [-r]"
+            exit 1
+            ;;
+    esac
+done
 
 # Check if video file exists
 if [ ! -f "$VIDEO_FILE" ]; then
@@ -84,7 +102,14 @@ ffmpeg -y -hide_banner -loglevel error \
 # Output file name
 OUTPUT_FILE="${VIDEO_FILE%.*}_lofi.mp4"
 
-echo "Processing video..."
+# Set video codec options based on compression flag
+if [ $COMPRESS_VIDEO -eq 1 ]; then
+    VIDEO_CODEC="-c:v libx264 -crf 28 -preset slow"
+    echo "Processing video with compression (this may take a while)..."
+else
+    VIDEO_CODEC="-c:v copy"
+    echo "Processing video..."
+fi
 if [ $REPLACE_AUDIO -eq 1 ]; then
     # Replace the original audio
     echo "Replacing original audio with lofi track..."
@@ -92,7 +117,7 @@ if [ $REPLACE_AUDIO -eq 1 ]; then
         -i "$VIDEO_FILE" \
         -i "$TEMP_AUDIO" \
         -map 0:v -map 1:a \
-        -c:v copy -c:a aac \
+        $VIDEO_CODEC -c:a aac \
         "$OUTPUT_FILE"
 else
     # Overlay the lofi audio on top of the original audio
@@ -102,7 +127,7 @@ else
         -i "$TEMP_AUDIO" \
         -filter_complex "[0:a][1:a]amix=inputs=2:duration=shortest:weights=1 0.5[a]" \
         -map 0:v -map "[a]" \
-        -c:v copy -c:a aac \
+        $VIDEO_CODEC -c:a aac \
         "$OUTPUT_FILE"
 fi
 
