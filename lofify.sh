@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # [latest version - i promise!]
-echo "🎶 Lofify - v25.11.12.0 (12 Nov 2025)"
+echo "🎶 Lofify - v25.11.19.0 (19 Nov 2025)"
 
 # lofify - A script to add random lofi background music to videos
 # Usage: lofify <video_file> [-c|-cf] [-r]
