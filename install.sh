@@ -80,19 +80,37 @@ download_lofify() {
 
 # Download sample lofi audio files
 download_sample_audio() {
-  print_color "blue" "Downloading sample lofi audio files..."
-  
+  print_color "blue" "Checking lofi audio files..."
+
   # Sample files from the repository
   FILES=(
     "Japan Coastal Vibes 🌅 Lofi Mix for Focus and Relaxation.mp3"
     "Rainy Japanese Street 🌧 No Copyright Lofi Hip Hop Mix 2022 🌧 Sleep Lofi Beats with Rain Sounds.mp3"
   )
-  
+
+  # Check if audio files already exist
+  FILES_TO_DOWNLOAD=()
+  for file in "${FILES[@]}"; do
+    if [ -f "$HOME/lofi_audios/$file" ]; then
+      print_color "green" "✅ Already exists: $file"
+    else
+      FILES_TO_DOWNLOAD+=("$file")
+    fi
+  done
+
+  # Skip download if all files exist
+  if [ ${#FILES_TO_DOWNLOAD[@]} -eq 0 ]; then
+    print_color "green" "✅ All lofi audio files already exist, skipping download"
+    return
+  fi
+
+  print_color "blue" "Downloading ${#FILES_TO_DOWNLOAD[@]} lofi audio file(s)..."
+
   # Create a temporary directory for downloading
   TEMP_DIR=$(mktemp -d)
-  
-  for file in "${FILES[@]}"; do
-    
+
+  for file in "${FILES_TO_DOWNLOAD[@]}"; do
+
     echo "Downloading: $file (this may take a while)"
 
     ENCODED_FILENAME=$(echo "$file" | sed 's/ /%20/g' | sed 's/🌅/%F0%9F%8C%85/g' | sed 's/🌧/%F0%9F%8C%A7/g')
@@ -104,7 +122,7 @@ download_sample_audio() {
       print_color "red" "❌ Failed to download: $file"
     fi
   done
-  
+
   # Remove temporary directory
   rm -rf "$TEMP_DIR"
 }

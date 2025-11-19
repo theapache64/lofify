@@ -5,16 +5,18 @@ echo "🎶 Lofify - v25.11.12.0 (12 Nov 2025)"
 
 # lofify - A script to add random lofi background music to videos
 # Usage: lofify <video_file> [-c|-cf] [-r]
-#   -c: Compress video (slower processing, best compression)
-#   -cf: Compress video fast (faster processing, good compression)
+#   -c: Compress video (best compression, slower processing)
+#   -cf: Compress video fast (good compression, faster processing)
 #   -r: Replace original audio instead of overlapping
+#   If no compression flag is provided, you'll be prompted to select a mode
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
     echo "Usage: lofify <video_file> [-c|-cf] [-r]"
-    echo "  -c: Compress video (slower processing, best compression)"
-    echo "  -cf: Compress video fast (faster processing, good compression)"
+    echo "  -c: Compress video (best compression, slower processing)"
+    echo "  -cf: Compress video fast (good compression, faster processing)"
     echo "  -r: Replace original audio instead of overlapping"
+    echo "  If no compression flag is provided, you'll be prompted to select a mode"
     exit 1
 fi
 
@@ -51,6 +53,43 @@ done
 if [ $COMPRESS_VIDEO -eq 1 ] && [ $COMPRESS_FAST -eq 1 ]; then
     echo "Error: Cannot use both -c and -cf flags together"
     exit 1
+fi
+
+# Prompt for compression mode if no compression flag was provided
+if [ $COMPRESS_VIDEO -eq 0 ] && [ $COMPRESS_FAST -eq 0 ]; then
+    echo ""
+    echo "Select compression mode:"
+    echo "  1) No compression - Fastest, same size as original"
+    echo "  2) Fast compression - Quick processing, good file size reduction"
+    echo "  3) Balanced compression - Moderate speed, better file size reduction"
+    echo "  4) Best compression - Slowest, maximum file size reduction"
+    echo ""
+    read -p "Enter your choice (1-4): " COMPRESSION_CHOICE
+
+    case "$COMPRESSION_CHOICE" in
+        1)
+            echo "Selected: No compression"
+            # COMPRESS_VIDEO and COMPRESS_FAST remain 0
+            ;;
+        2)
+            echo "Selected: Fast compression"
+            COMPRESS_FAST=1
+            ;;
+        3)
+            echo "Selected: Balanced compression"
+            COMPRESS_VIDEO=1
+            COMPRESS_MODE="medium"
+            ;;
+        4)
+            echo "Selected: Best compression"
+            COMPRESS_VIDEO=1
+            COMPRESS_MODE="slow"
+            ;;
+        *)
+            echo "Invalid choice. Using no compression."
+            ;;
+    esac
+    echo ""
 fi
 
 # Check if video file exists
@@ -120,14 +159,19 @@ OUTPUT_FILE="${VIDEO_FILE%.*}_lofi.mp4"
 
 # Set video codec options based on compression flag
 if [ $COMPRESS_VIDEO -eq 1 ]; then
-    VIDEO_CODEC="-c:v libx264 -crf 28 -preset slow"
-    echo "Processing video with compression (this may take a while)..."
+    if [ "$COMPRESS_MODE" = "medium" ]; then
+        VIDEO_CODEC="-c:v libx264 -crf 28 -preset medium"
+        echo "Processing video with balanced compression..."
+    else
+        VIDEO_CODEC="-c:v libx264 -crf 28 -preset slow"
+        echo "Processing video with best compression (this may take a while)..."
+    fi
 elif [ $COMPRESS_FAST -eq 1 ]; then
     VIDEO_CODEC="-c:v libx264 -crf 28 -preset superfast"
     echo "Processing video with fast compression..."
 else
     VIDEO_CODEC="-c:v copy"
-    echo "Processing video..."
+    echo "Processing video without compression..."
 fi
 if [ $REPLACE_AUDIO -eq 1 ]; then
     # Replace the original audio
