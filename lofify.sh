@@ -8,7 +8,24 @@ echo "🎶 Lofify - v25.11.12.0 (12 Nov 2025)"
 #   -c: Compress video (best compression, slower processing)
 #   -cf: Compress video fast (good compression, faster processing)
 #   -r: Replace original audio instead of overlapping
+#   -v <volume>: Set lofi volume (default: 0.5)
 #   If no compression flag is provided, you'll be prompted to select a mode
+
+# Check for required dependencies
+for cmd in ffmpeg ffprobe bc; do
+    if ! command -v $cmd &> /dev/null; then
+        echo "Error: $cmd is not installed. Please install it first."
+        exit 1
+    fi
+done
+
+# Cleanup trap
+cleanup() {
+    if [ -n "$TEMP_AUDIO" ] && [ -f "$TEMP_AUDIO" ]; then
+        rm "$TEMP_AUDIO"
+    fi
+}
+trap cleanup EXIT
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
@@ -16,6 +33,7 @@ if [ $# -lt 1 ]; then
     echo "  -c: Compress video (best compression, slower processing)"
     echo "  -cf: Compress video fast (good compression, faster processing)"
     echo "  -r: Replace original audio instead of overlapping"
+    echo "  -v <volume>: Set lofi volume (default: 0.5)"
     echo "  If no compression flag is provided, you'll be prompted to select a mode"
     exit 1
 fi
@@ -24,6 +42,7 @@ VIDEO_FILE="$1"
 REPLACE_AUDIO=0
 COMPRESS_VIDEO=0
 COMPRESS_FAST=0
+VOLUME=0.5
 
 # Parse optional flags
 shift # Remove the video file argument
@@ -41,9 +60,13 @@ while [[ $# -gt 0 ]]; do
             REPLACE_AUDIO=1
             shift
             ;;
+        -v)
+            VOLUME="$2"
+            shift 2
+            ;;
         *)
             echo "Unknown flag: $1"
-            echo "Usage: lofify <video_file> [-c|-cf] [-r]"
+            echo "Usage: lofify <video_file> [-c|-cf] [-r] [-v <volume>]"
             exit 1
             ;;
     esac
@@ -99,7 +122,7 @@ if [ ! -f "$VIDEO_FILE" ]; then
 fi
 
 # Directory containing lofi audio files
-LOFI_DIR="$HOME/lofi_audios"
+LOFI_DIR="${LOFIFY_PATH:-$HOME/lofi_audios}"
 
 # Check if lofi directory exists
 if [ ! -d "$LOFI_DIR" ]; then
@@ -134,6 +157,7 @@ if (( $(echo "$AUDIO_DURATION > $VIDEO_DURATION" | bc -l) )); then
     MAX_START=$(echo "$AUDIO_DURATION - $VIDEO_DURATION" | bc -l)
     # Generate random float between 0 and MAX_START
     START_POINT=$(echo "scale=2; $RANDOM/32767 * $MAX_START" | bc -l)
+    START_POINT=$(printf "%.2f" "$START_POINT")
     echo "Using audio segment starting at $START_POINT seconds"
 else
     echo "Audio is shorter than video, using from beginning"
@@ -153,6 +177,11 @@ ffmpeg -y -hide_banner -loglevel error \
     -t "$VIDEO_DURATION" \
     -af "afade=t=in:st=0:d=$FADE_IN,afade=t=out:st=$(echo "$VIDEO_DURATION - $FADE_OUT" | bc -l):d=$FADE_OUT" \
     "$TEMP_AUDIO"
+
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to process lofi audio."
+    exit 1
+fi
 
 # Output file name
 OUTPUT_FILE="${VIDEO_FILE%.*}_lofi.mp4"
@@ -182,19 +211,29 @@ if [ $REPLACE_AUDIO -eq 1 ]; then
         -map 0:v -map 1:a \
         $VIDEO_CODEC -c:a aac \
         "$OUTPUT_FILE"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to replace audio."
+        exit 1
+    fi
 else
     # Overlay the lofi audio on top of the original audio
     echo "Overlaying lofi track with original audio..."
     ffmpeg -y -hide_banner -loglevel error \
         -i "$VIDEO_FILE" \
         -i "$TEMP_AUDIO" \
-        -filter_complex "[0:a][1:a]amix=inputs=2:duration=shortest:weights=1 0.5[a]" \
+        -filter_complex "[0:a][1:a]amix=inputs=2:duration=shortest:weights=1 $VOLUME[a]" \
         -map 0:v -map "[a]" \
         $VIDEO_CODEC -c:a aac \
         "$OUTPUT_FILE"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to overlay audio."
+        exit 1
+    fi
 fi
 
 # Clean up temporary file
-rm "$TEMP_AUDIO"
+# Clean up is handled by trap
 
 echo "✅ Lofified video created: $OUTPUT_FILE"
