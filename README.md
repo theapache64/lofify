@@ -14,6 +14,27 @@ lofify takes videos, adds randomly selected lofi track from collection, with smo
 
 https://github.com/user-attachments/assets/67b617a2-1832-404e-88e0-23500b5c53a4
 
+## Quick Installation
+
+Install Lofify with a single command:
+
+```bash
+curl -s https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
+```
+
+or
+
+```bash
+wget -qO- https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
+```
+
+This will:
+- Install the Lofify script to your `~/bin` directory
+- Set up sample lofi audio files in `~/lofi_audios`
+- Add `~/bin` to your PATH (if not already there)
+
+After installation, you may need to restart your terminal or run `source ~/.bashrc` or `source ~/.zshrc` to make the command available in your current session.
+
 ## Features
 
 - 🎲 Randomly selects lofi background tracks
@@ -89,26 +110,6 @@ Before installing Lofify, make sure you have the following dependencies:
   - macOS: `brew install bc`
   - Ubuntu/Debian: `sudo apt install bc`
 
-## Quick Installation
-
-Install Lofify with a single command:
-
-```bash
-curl -s https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
-```
-
-or
-
-```bash
-wget -qO- https://raw.githubusercontent.com/theapache64/lofify/master/install.sh | bash
-```
-
-This will:
-- Install the Lofify script to your `~/bin` directory
-- Set up sample lofi audio files in `~/lofi_audios`
-- Add `~/bin` to your PATH (if not already there)
-
-After installation, you may need to restart your terminal or run `source ~/.bashrc` or `source ~/.zshrc` to make the command available in your current session.
 
 ## Manual Installation
 
